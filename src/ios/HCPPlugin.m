@@ -260,6 +260,11 @@ static NSString *const DEFAULT_STARTING_PAGE = @"index.html";
         NSURLRequest *request = [NSURLRequest requestWithURL:loadURL
                                                  cachePolicy:NSURLRequestReloadIgnoringCacheData
                                              timeoutInterval:10000];
+        if ([_filesStructure.wwwFolder.absoluteString rangeOfString:@"cordova-hot-code-push-plugin"].length > 0) {
+            // return if the path is the plugin, the app will set root in ionic webview
+            return;
+        }
+
 #ifdef __CORDOVA_4_0_0
         [self.webViewEngine loadRequest:request];
 #else
@@ -286,7 +291,8 @@ static NSString *const DEFAULT_STARTING_PAGE = @"index.html";
 
     // rewrite starting page www folder path: should load from external storage
     if ([self.viewController isKindOfClass:[CDVViewController class]]) {
-        ((CDVViewController *)self.viewController).wwwFolderName = _filesStructure.wwwFolder.absoluteString;
+        //((CDVViewController *)self.viewController).wwwFolderName = _filesStructure.wwwFolder.absoluteString;
+        NSLog(@"HotCodePush: webview will set root to new folder");
     } else {
         NSLog(@"HotCodePushError: Can't make starting page to be from external storage. Main controller should be of type CDVViewController.");
     }
